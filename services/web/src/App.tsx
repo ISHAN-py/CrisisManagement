@@ -199,7 +199,12 @@ export default function App() {
       pointsToShow = filtered.filter(crisis => crisis._id === focusedCrisis);
     }
     
-    const validPoints = pointsToShow.filter((d) => typeof d.lat === 'number' && typeof d.lng === 'number');
+    // Filter out points with coordinates (0,0) and ensure valid coordinates
+    const validPoints = pointsToShow.filter((d) => 
+      typeof d.lat === 'number' && 
+      typeof d.lng === 'number' && 
+      !(d.lat === 0 && d.lng === 0)
+    );
     
     // Apply deduplication only when not focusing on a specific crisis
     if (!focusedCrisis) {
