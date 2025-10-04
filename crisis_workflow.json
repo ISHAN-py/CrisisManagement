@@ -11,7 +11,7 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3,
       "position": [
-        6480,
+        6688,
         17088
       ]
     },
@@ -46,8 +46,7 @@
       "position": [
         5136,
         16656
-      ],
-      "disabled": true
+      ]
     },
     {
       "parameters": {
@@ -61,8 +60,7 @@
       "position": [
         5136,
         16848
-      ],
-      "disabled": true
+      ]
     },
     {
       "parameters": {
@@ -76,8 +74,7 @@
       "position": [
         5136,
         17040
-      ],
-      "disabled": true
+      ]
     },
     {
       "parameters": {
@@ -104,9 +101,8 @@
       "typeVersion": 1,
       "position": [
         4752,
-        17456
-      ],
-      "disabled": true
+        17440
+      ]
     },
     {
       "parameters": {
@@ -119,24 +115,8 @@
       "typeVersion": 1,
       "position": [
         4768,
-        17648
-      ],
-      "disabled": true
-    },
-    {
-      "parameters": {
-        "url": "https://www.spc.noaa.gov/products/spcrss.xml",
-        "options": {}
-      },
-      "id": "eabf1f5b-3660-4081-8965-017a42a87948",
-      "name": "NOAA Weather2",
-      "type": "n8n-nodes-base.rssFeedRead",
-      "typeVersion": 1,
-      "position": [
-        5184,
-        18048
-      ],
-      "disabled": true
+        17632
+      ]
     },
     {
       "parameters": {
@@ -148,10 +128,9 @@
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
       "position": [
-        5184,
-        18288
-      ],
-      "disabled": true
+        5104,
+        18176
+      ]
     },
     {
       "parameters": {
@@ -163,10 +142,10 @@
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
       "position": [
-        5184,
-        18496
+        5152,
+        17232
       ],
-      "disabled": true
+      "executeOnce": false
     },
     {
       "parameters": {
@@ -224,7 +203,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        6256,
+        6512,
         17296
       ],
       "credentials": {
@@ -243,7 +222,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        6704,
+        6912,
         17088
       ]
     },
@@ -256,7 +235,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        6928,
+        7136,
         17088
       ]
     },
@@ -269,7 +248,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        7152,
+        7360,
         17088
       ]
     },
@@ -282,7 +261,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        7376,
+        7584,
         17088
       ]
     },
@@ -298,7 +277,7 @@
       "type": "n8n-nodes-base.mongoDb",
       "typeVersion": 1.2,
       "position": [
-        7600,
+        7808,
         17088
       ],
       "credentials": {
@@ -318,7 +297,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        7824,
+        8032,
         17088
       ]
     },
@@ -330,13 +309,12 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        5408,
-        18192
+        5472,
+        18112
       ],
       "id": "7f415631-339c-4812-a6b7-64409a743966",
       "name": "Wait1",
-      "webhookId": "848cce1d-26de-47e7-b4ad-d225024bd209",
-      "disabled": true
+      "webhookId": "848cce1d-26de-47e7-b4ad-d225024bd209"
     },
     {
       "parameters": {
@@ -350,8 +328,7 @@
       ],
       "id": "73b876d3-c935-4029-a4da-bdf7f6baa0b2",
       "name": "Wait2",
-      "webhookId": "848cce1d-26de-47e7-b4ad-d225024bd209",
-      "disabled": true
+      "webhookId": "848cce1d-26de-47e7-b4ad-d225024bd209"
     },
     {
       "parameters": {
@@ -363,10 +340,9 @@
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
       "position": [
-        5184,
-        18656
-      ],
-      "disabled": true
+        5104,
+        18368
+      ]
     },
     {
       "parameters": {
@@ -378,8 +354,8 @@
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
       "position": [
-        5184,
-        17888
+        5104,
+        17968
       ]
     },
     {
@@ -392,10 +368,38 @@
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
       "position": [
-        5184,
-        17744
+        5104,
+        17808
+      ]
+    },
+    {
+      "parameters": {
+        "batchSize": 20,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        5696,
+        16528
       ],
-      "disabled": true
+      "id": "ca126329-97b6-413c-9f32-e5e3f26376be",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "amount": 1,
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        5888,
+        16736
+      ],
+      "id": "81e4f66a-6d49-4755-a41a-1ed4e026d7ab",
+      "name": "Wait",
+      "webhookId": "0ecf88d0-2c87-4499-995d-f2b371c447ee"
     }
   ],
   "connections": {
@@ -440,11 +444,6 @@
           },
           {
             "node": "RSS CNBC Finance2",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "NOAA Weather2",
             "type": "main",
             "index": 0
           },
@@ -542,17 +541,6 @@
         ]
       ]
     },
-    "NOAA Weather2": {
-      "main": [
-        [
-          {
-            "node": "Wait1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "UN OCHA2": {
       "main": [
         [
@@ -568,7 +556,7 @@
       "main": [
         [
           {
-            "node": "Wait1",
+            "node": "Loop Over Items",
             "type": "main",
             "index": 0
           }
@@ -675,6 +663,11 @@
             "node": "Log Results2",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -728,6 +721,29 @@
         [
           {
             "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Prepare LLM Prompt1",
             "type": "main",
             "index": 0
           }
