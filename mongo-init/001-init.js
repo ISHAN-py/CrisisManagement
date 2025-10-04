@@ -1,0 +1,140 @@
+// Initialize database, collection, and indexes
+const dbName = 'crisisdb';
+const collectionName = 'crises';
+
+const db = db.getSiblingDB(dbName);
+
+db.createCollection(collectionName);
+
+db[collectionName].createIndexes([
+  { key: { link: 1 }, name: 'uniq_link', unique: true },
+  { key: { pubDate: -1 }, name: 'pubDate_desc' },
+  { key: { loc: '2dsphere' }, name: 'loc_2dsphere' },
+]);
+
+// Insert sample data
+const now = new Date();
+const docs = [
+  {
+    title: 'Earthquake rattles Tokyo region',
+    description: 'A 5.8 magnitude earthquake struck near Tokyo. Minor damage reported.',
+    link: 'https://news.example.com/jp/eq-1',
+    source: 'Sample',
+    pubDate: new Date(now.getTime() - 3600 * 1000),
+    country: 'Japan',
+    lat: 36.2048,
+    lng: 138.2529,
+    loc: { type: 'Point', coordinates: [138.2529, 36.2048] },
+    created_at: now,
+  },
+  {
+    title: 'Floods inundate parts of Germany',
+    description: 'Heavy rains caused flooding across western regions.',
+    link: 'https://news.example.com/de/fl-1',
+    source: 'Sample',
+    pubDate: new Date(now.getTime() - 2 * 3600 * 1000),
+    country: 'Germany',
+    lat: 51.1657,
+    lng: 10.4515,
+    loc: { type: 'Point', coordinates: [10.4515, 51.1657] },
+    created_at: now,
+  },
+  {
+    title: 'Wildfires spread in Australia',
+    description: 'Authorities issue evacuation orders in NSW.',
+    link: 'https://news.example.com/au/fw-1',
+    source: 'Sample',
+    pubDate: new Date(now.getTime() - 3 * 3600 * 1000),
+    country: 'Australia',
+    lat: -25.2744,
+    lng: 133.7751,
+    loc: { type: 'Point', coordinates: [133.7751, -25.2744] },
+    created_at: now,
+  },
+  {
+    title: 'Hurricane approaches Florida',
+    description: 'Storm strengthens to Category 3 over the Atlantic.',
+    link: 'https://news.example.com/us/hc-1',
+    source: 'Sample',
+    pubDate: new Date(now.getTime() - 4 * 3600 * 1000),
+    country: 'USA',
+    lat: 27.9944,
+    lng: -81.7603,
+    loc: { type: 'Point', coordinates: [-81.7603, 27.9944] },
+    created_at: now,
+  },
+  {
+    title: 'Tsunami warning after quake in Indonesia',
+    description: 'Coastal residents advised to move to higher ground.',
+    link: 'https://news.example.com/id/ts-1',
+    source: 'Sample',
+    pubDate: new Date(now.getTime() - 5 * 3600 * 1000),
+    country: 'Indonesia',
+    lat: -0.7893,
+    lng: 113.9213,
+    loc: { type: 'Point', coordinates: [113.9213, -0.7893] },
+    created_at: now,
+  },
+  {
+    title: 'Conflict escalates near border',
+    description: 'Skirmishes reported overnight, casualties unconfirmed.',
+    link: 'https://news.example.com/ua/cf-1',
+    source: 'Sample',
+    pubDate: new Date(now.getTime() - 6 * 3600 * 1000),
+    country: 'Ukraine',
+    lat: 48.3794,
+    lng: 31.1656,
+    loc: { type: 'Point', coordinates: [31.1656, 48.3794] },
+    created_at: now,
+  },
+  {
+    title: 'Volcanic eruption in Iceland decreases',
+    description: 'Seismic activity shows signs of slowing.',
+    link: 'https://news.example.com/is/vo-1',
+    source: 'Sample',
+    pubDate: new Date(now.getTime() - 7 * 3600 * 1000),
+    country: 'Iceland',
+    lat: 64.9631,
+    lng: -19.0208,
+    loc: { type: 'Point', coordinates: [-19.0208, 64.9631] },
+    created_at: now,
+  },
+  {
+    title: 'Landslide blocks highway in Nepal',
+    description: 'Rescue teams dispatched to affected area.',
+    link: 'https://news.example.com/np/ls-1',
+    source: 'Sample',
+    pubDate: new Date(now.getTime() - 8 * 3600 * 1000),
+    country: 'Nepal',
+    lat: 28.3949,
+    lng: 84.1240,
+    loc: { type: 'Point', coordinates: [84.124, 28.3949] },
+    created_at: now,
+  },
+  {
+    title: 'Severe drought in Brazil triggers emergency',
+    description: 'Government announces water rationing measures.',
+    link: 'https://news.example.com/br/dr-1',
+    source: 'Sample',
+    pubDate: new Date(now.getTime() - 9 * 3600 * 1000),
+    country: 'Brazil',
+    lat: -14.2350,
+    lng: -51.9253,
+    loc: { type: 'Point', coordinates: [-51.9253, -14.235] },
+    created_at: now,
+  },
+  {
+    title: 'Train crash in India kills several',
+    description: 'Emergency services on site, investigation underway.',
+    link: 'https://news.example.com/in/tr-1',
+    source: 'Sample',
+    pubDate: new Date(now.getTime() - 10 * 3600 * 1000),
+    country: 'India',
+    lat: 20.5937,
+    lng: 78.9629,
+    loc: { type: 'Point', coordinates: [78.9629, 20.5937] },
+    created_at: now,
+  },
+];
+
+db[collectionName].insertMany(docs, { ordered: false });

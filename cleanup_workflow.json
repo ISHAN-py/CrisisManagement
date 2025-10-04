@@ -1,0 +1,170 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 24
+            }
+          ]
+        }
+      },
+      "id": "daily-cleanup-trigger",
+      "name": "Daily Cleanup Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "http://api:3000/cleanup/stats",
+        "options": {}
+      },
+      "id": "get-cleanup-stats",
+      "name": "Get Cleanup Stats",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        460,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "check-old-entries",
+              "leftValue": "={{ $json.oldEntries }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "check-if-cleanup-needed",
+      "name": "Check if Cleanup Needed",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        680,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "DELETE",
+        "url": "http://api:3000/cleanup",
+        "options": {}
+      },
+      "id": "perform-cleanup",
+      "name": "Perform Cleanup",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        900,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Log cleanup results\nconst stats = $input.first().json;\nconst cleanupResult = $input.last().json;\n\nconst logMessage = `🧹 Daily Cleanup Complete:\n` +\n  `📊 Before: ${stats.totalEntries} total entries (${stats.percentageOld}% old)\n` +\n  `🗑️  Deleted: ${cleanupResult.deletedCount} entries\n` +\n  `📅 Cutoff: ${new Date(cleanupResult.cutoffDate).toLocaleString()}\n` +\n  `✅ Success: ${cleanupResult.success}`;\n\nconsole.log(logMessage);\n\nreturn [{\n  json: {\n    timestamp: new Date().toISOString(),\n    action: 'cleanup_completed',\n    beforeStats: stats,\n    cleanupResult: cleanupResult,\n    logMessage: logMessage\n  }\n}];"
+      },
+      "id": "log-cleanup-results",
+      "name": "Log Cleanup Results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Log when no cleanup is needed\nconst stats = $input.first().json;\n\nconst logMessage = `✅ No Cleanup Needed:\n` +\n  `📊 Total entries: ${stats.totalEntries}\n` +\n  `📅 Old entries: ${stats.oldEntries} (${stats.percentageOld}%)\n` +\n  `🕒 Cutoff date: ${new Date(stats.cutoffDate).toLocaleString()}`;\n\nconsole.log(logMessage);\n\nreturn [{\n  json: {\n    timestamp: new Date().toISOString(),\n    action: 'no_cleanup_needed',\n    stats: stats,\n    logMessage: logMessage\n  }\n}];"
+      },
+      "id": "log-no-cleanup",
+      "name": "Log No Cleanup Needed",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        900,
+        400
+      ]
+    }
+  ],
+  "connections": {
+    "Daily Cleanup Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get Cleanup Stats",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Cleanup Stats": {
+      "main": [
+        [
+          {
+            "node": "Check if Cleanup Needed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check if Cleanup Needed": {
+      "main": [
+        [
+          {
+            "node": "Perform Cleanup",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log No Cleanup Needed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Perform Cleanup": {
+      "main": [
+        [
+          {
+            "node": "Log Cleanup Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "cleanup-workflow-instance"
+  }
+}

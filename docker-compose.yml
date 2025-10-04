@@ -1,0 +1,77 @@
+version: "3.9"
+
+services:
+  mongo:
+    image: mongo:5
+    container_name: crisis_mongo
+    restart: always
+    environment:
+      - MONGO_INITDB_DATABASE=crisisdb
+    volumes:
+      - mongo_data:/data/db
+      - ./mongo-init:/docker-entrypoint-initdb.d
+    ports:
+      - "27018:27017"
+
+  mongo-express:
+    image: mongo-express:1.0.2-20
+    container_name: crisis_mongo_express
+    restart: always
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongo
+      - ME_CONFIG_MONGODB_ENABLE_ADMIN=true
+      - ME_CONFIG_BASICAUTH_USERNAME=admin
+      - ME_CONFIG_BASICAUTH_PASSWORD=hackathon2025
+    depends_on:
+      - mongo
+    ports:
+      - "8081:8081"
+
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: crisis_n8n
+    restart: always
+    environment:
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=admin
+      - N8N_BASIC_AUTH_PASSWORD=hackathon2025
+      - N8N_HOST=n8n
+      - N8N_PROTOCOL=http
+      - GENERIC_TIMEZONE=UTC
+      - DB_TYPE=mongodb
+      - DB_MONGODB_CONNECTION_URL=mongodb://mongo:27017/n8n
+    depends_on:
+      - mongo
+    ports:
+      - "5680:5678"
+    volumes:
+      - n8n_data:/home/node/.n8n
+
+  api:
+    build: ./services/api
+    container_name: crisis_api
+    restart: always
+    environment:
+      - MONGO_URL=mongodb://mongo:27017
+      - MONGO_DB=crisisdb
+      - PORT=3000
+      - CORS_ORIGIN=*
+    depends_on:
+      - mongo
+    ports:
+      - "3000:3000"
+
+  web:
+    build: ./services/web
+    container_name: crisis_web
+    restart: always
+    environment:
+      - VITE_API_BASE=http://localhost:3000
+    depends_on:
+      - api
+    ports:
+      - "5175:5173"
+
+volumes:
+  mongo_data:
+  n8n_data:
