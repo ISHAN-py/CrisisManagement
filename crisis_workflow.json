@@ -46,7 +46,8 @@
       "position": [
         5136,
         16656
-      ]
+      ],
+      "disabled": true
     },
     {
       "parameters": {
@@ -60,7 +61,8 @@
       "position": [
         5136,
         16848
-      ]
+      ],
+      "disabled": true
     },
     {
       "parameters": {
@@ -74,7 +76,8 @@
       "position": [
         5136,
         17040
-      ]
+      ],
+      "disabled": true
     },
     {
       "parameters": {
@@ -102,7 +105,8 @@
       "position": [
         4752,
         17456
-      ]
+      ],
+      "disabled": true
     },
     {
       "parameters": {
@@ -116,7 +120,8 @@
       "position": [
         4768,
         17648
-      ]
+      ],
+      "disabled": true
     },
     {
       "parameters": {
@@ -128,9 +133,10 @@
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
       "position": [
-        5200,
-        17936
-      ]
+        5184,
+        18048
+      ],
+      "disabled": true
     },
     {
       "parameters": {
@@ -142,9 +148,10 @@
       "type": "n8n-nodes-base.rssFeedRead",
       "typeVersion": 1,
       "position": [
-        5200,
-        18144
-      ]
+        5184,
+        18288
+      ],
+      "disabled": true
     },
     {
       "parameters": {
@@ -157,8 +164,9 @@
       "typeVersion": 1,
       "position": [
         5184,
-        18352
-      ]
+        18496
+      ],
+      "disabled": true
     },
     {
       "parameters": {
@@ -208,7 +216,7 @@
         "sendBody": true,
         "contentType": "raw",
         "rawContentType": "application/json",
-        "body": "={{ JSON.stringify({\n  model: 'llama-3.1-8b-instant',\n  messages: [\n    {\n      role: 'system',\n      content: 'You are a location extraction expert. Extract ONLY the primary location (city and/or country) from the news. Return ONLY valid JSON: {\"location\": \"City, Country\" or \"Country\", \"confidence\": \"high\" or \"medium\" or \"low\"}. If no location, return {\"location\": \"Unknown\", \"confidence\": \"low\"}'\n    },\n    {\n      role: 'user',\n      content: $json.llm_prompt\n    }\n  ],\n  temperature: 0.1,\n  max_tokens: 100\n}) }}",
+        "body": "={{ JSON.stringify({\n  model: 'llama-3.1-8b-instant',\n  messages: [\n    {\n      role: 'system',\n      content: 'You are a location extraction expert. Extract ONLY the primary location (city and/or country) from the news. First try to extract from the title fields. Return ONLY valid JSON: {\"location\": \"City, Country\" or \"Country\", \"confidence\": \"high\" or \"medium\" or \"low\"}. If no location, return {\"location\": \"Unknown\", \"confidence\": \"low\"}'\n    },\n    {\n      role: 'user',\n      content: $json.llm_prompt\n    }\n  ],\n  temperature: 0.1,\n  max_tokens: 100\n}) }}",
         "options": {}
       },
       "id": "af89e200-391b-451a-bff4-4c8b70dd89f2",
@@ -241,7 +249,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Multi-level geocoding with cache\nconst locationCache = {\n  // North America\n  'USA': { lat: 37.0902, lng: -95.7129 },\n  'United States': { lat: 37.0902, lng: -95.7129 },\n  'US': { lat: 37.0902, lng: -95.7129 },\n  'Canada': { lat: 56.1304, lng: -106.3468 },\n  'Mexico': { lat: 23.6345, lng: -102.5528 },\n  'Cuba': { lat: 21.5218, lng: -77.7812 },\n  'Jamaica': { lat: 18.1096, lng: -77.2975 },\n  'Haiti': { lat: 18.9712, lng: -72.2852 },\n  'Dominican Republic': { lat: 18.7357, lng: -70.1627 },\n  'Puerto Rico': { lat: 18.2208, lng: -66.5901 },\n  'Guatemala': { lat: 15.7835, lng: -90.2308 },\n  'Honduras': { lat: 15.2000, lng: -86.2419 },\n  'Nicaragua': { lat: 12.8654, lng: -85.2072 },\n  'Costa Rica': { lat: 9.7489, lng: -83.7534 },\n  'Panama': { lat: 8.5380, lng: -80.7821 },\n  \n  // South America\n  'Brazil': { lat: -14.2350, lng: -51.9253 },\n  'Argentina': { lat: -38.4161, lng: -63.6167 },\n  'Chile': { lat: -35.6751, lng: -71.5430 },\n  'Colombia': { lat: 4.5709, lng: -74.2973 },\n  'Peru': { lat: -9.1900, lng: -75.0152 },\n  'Venezuela': { lat: 6.4238, lng: -66.5897 },\n  'Ecuador': { lat: -1.8312, lng: -78.1834 },\n  'Bolivia': { lat: -16.2902, lng: -63.5887 },\n  'Paraguay': { lat: -23.4425, lng: -58.4438 },\n  'Uruguay': { lat: -32.5228, lng: -55.7658 },\n  'Guyana': { lat: 4.8604, lng: -58.9302 },\n  'Suriname': { lat: 3.9193, lng: -56.0278 },\n  \n  // Europe\n  'UK': { lat: 55.3781, lng: -3.4360 },\n  'United Kingdom': { lat: 55.3781, lng: -3.4360 },\n  'England': { lat: 52.3555, lng: -1.1743 },\n  'Scotland': { lat: 56.4907, lng: -4.2026 },\n  'Wales': { lat: 52.1307, lng: -3.7837 },\n  'Ireland': { lat: 53.4129, lng: -8.2439 },\n  'Northern Ireland': { lat: 54.7877, lng: -6.4923 },\n  'France': { lat: 46.2276, lng: 2.2137 },\n  'Germany': { lat: 51.1657, lng: 10.4515 },\n  'Italy': { lat: 41.8719, lng: 12.5674 },\n  'Spain': { lat: 40.4637, lng: -3.7492 },\n  'Portugal': { lat: 39.3999, lng: -8.2245 },\n  'Greece': { lat: 39.0742, lng: 21.8243 },\n  'Netherlands': { lat: 52.1326, lng: 5.2913 },\n  'Belgium': { lat: 50.5039, lng: 4.4699 },\n  'Switzerland': { lat: 46.8182, lng: 8.2275 },\n  'Austria': { lat: 47.5162, lng: 14.5501 },\n  'Poland': { lat: 51.9194, lng: 19.1451 },\n  'Czech Republic': { lat: 49.8175, lng: 15.4730 },\n  'Slovakia': { lat: 48.6690, lng: 19.6990 },\n  'Hungary': { lat: 47.1625, lng: 19.5033 },\n  'Romania': { lat: 45.9432, lng: 24.9668 },\n  'Bulgaria': { lat: 42.7339, lng: 25.4858 },\n  'Serbia': { lat: 44.0165, lng: 21.0059 },\n  'Croatia': { lat: 45.1, lng: 15.2 },\n  'Bosnia': { lat: 43.9159, lng: 17.6791 },\n  'Albania': { lat: 41.1533, lng: 20.1683 },\n  'North Macedonia': { lat: 41.6086, lng: 21.7453 },\n  'Slovenia': { lat: 46.1512, lng: 14.9955 },\n  'Montenegro': { lat: 42.7087, lng: 19.3744 },\n  'Sweden': { lat: 60.1282, lng: 18.6435 },\n  'Norway': { lat: 60.4720, lng: 8.4689 },\n  'Denmark': { lat: 56.2639, lng: 9.5018 },\n  'Finland': { lat: 61.9241, lng: 25.7482 },\n  'Iceland': { lat: 64.9631, lng: -19.0208 },\n  'Estonia': { lat: 58.5953, lng: 25.0136 },\n  'Latvia': { lat: 56.8796, lng: 24.6032 },\n  'Lithuania': { lat: 55.1694, lng: 23.8813 },\n  'Belarus': { lat: 53.7098, lng: 27.9534 },\n  'Moldova': { lat: 47.4116, lng: 28.3699 },\n  \n  // Asia\n  'China': { lat: 35.8617, lng: 104.1954 },\n  'India': { lat: 20.5937, lng: 78.9629 },\n  'Japan': { lat: 36.2048, lng: 138.2529 },\n  'South Korea': { lat: 35.9078, lng: 127.7669 },\n  'North Korea': { lat: 40.3399, lng: 127.5101 },\n  'Vietnam': { lat: 14.0583, lng: 108.2772 },\n  'Thailand': { lat: 15.8700, lng: 100.9925 },\n  'Myanmar': { lat: 21.9162, lng: 95.9560 },\n  'Burma': { lat: 21.9162, lng: 95.9560 },\n  'Cambodia': { lat: 12.5657, lng: 104.9910 },\n  'Laos': { lat: 19.8563, lng: 102.4955 },\n  'Malaysia': { lat: 4.2105, lng: 101.9758 },\n  'Singapore': { lat: 1.3521, lng: 103.8198 },\n  'Indonesia': { lat: -0.7893, lng: 113.9213 },\n  'Philippines': { lat: 12.8797, lng: 121.7740 },\n  'Bangladesh': { lat: 23.6850, lng: 90.3563 },\n  'Pakistan': { lat: 30.3753, lng: 69.3451 },\n  'Afghanistan': { lat: 33.9391, lng: 67.7100 },\n  'Nepal': { lat: 28.3949, lng: 84.1240 },\n  'Bhutan': { lat: 27.5142, lng: 90.4336 },\n  'Sri Lanka': { lat: 7.8731, lng: 80.7718 },\n  'Mongolia': { lat: 46.8625, lng: 103.8467 },\n  'Kazakhstan': { lat: 48.0196, lng: 66.9237 },\n  'Uzbekistan': { lat: 41.3775, lng: 64.5853 },\n  'Turkmenistan': { lat: 38.9697, lng: 59.5563 },\n  'Kyrgyzstan': { lat: 41.2044, lng: 74.7661 },\n  'Tajikistan': { lat: 38.8610, lng: 71.2761 },\n  'Taiwan': { lat: 23.6978, lng: 120.9605 },\n  'Hong Kong': { lat: 22.3193, lng: 114.1694 },\n  \n  // Middle East\n  'Turkey': { lat: 38.9637, lng: 35.2433 },\n  'Iran': { lat: 32.4279, lng: 53.6880 },\n  'Iraq': { lat: 33.2232, lng: 43.6793 },\n  'Syria': { lat: 34.8021, lng: 38.9968 },\n  'Lebanon': { lat: 33.8547, lng: 35.8623 },\n  'Jordan': { lat: 30.5852, lng: 36.2384 },\n  'Israel': { lat: 31.0461, lng: 34.8516 },\n  'Palestine': { lat: 31.9522, lng: 35.2332 },\n  'Gaza': { lat: 31.3547, lng: 34.3088 },\n  'West Bank': { lat: 31.9466, lng: 35.3027 },\n  'Saudi Arabia': { lat: 23.8859, lng: 45.0792 },\n  'Yemen': { lat: 15.5527, lng: 48.5164 },\n  'Oman': { lat: 21.4735, lng: 55.9754 },\n  'UAE': { lat: 23.4241, lng: 53.8478 },\n  'United Arab Emirates': { lat: 23.4241, lng: 53.8478 },\n  'Kuwait': { lat: 29.3117, lng: 47.4818 },\n  'Qatar': { lat: 25.3548, lng: 51.1839 },\n  'Bahrain': { lat: 26.0667, lng: 50.5577 },\n  \n  // Africa\n  'Egypt': { lat: 26.8206, lng: 30.8025 },\n  'South Africa': { lat: -30.5595, lng: 22.9375 },\n  'Nigeria': { lat: 9.0820, lng: 8.6753 },\n  'Kenya': { lat: -0.0236, lng: 37.9062 },\n  'Ethiopia': { lat: 9.1450, lng: 40.4897 },\n  'Tanzania': { lat: -6.3690, lng: 34.8888 },\n  'Uganda': { lat: 1.3733, lng: 32.2903 },\n  'Ghana': { lat: 7.9465, lng: -1.0232 },\n  'Morocco': { lat: 31.7917, lng: -7.0926 },\n  'Algeria': { lat: 28.0339, lng: 1.6596 },\n  'Tunisia': { lat: 33.8869, lng: 9.5375 },\n  'Libya': { lat: 26.3351, lng: 17.2283 },\n  'Sudan': { lat: 12.8628, lng: 30.2176 },\n  'South Sudan': { lat: 6.8770, lng: 31.3070 },\n  'Somalia': { lat: 5.1521, lng: 46.1996 },\n  'Zimbabwe': { lat: -19.0154, lng: 29.1549 },\n  'Mozambique': { lat: -18.6657, lng: 35.5296 },\n  'Angola': { lat: -11.2027, lng: 17.8739 },\n  'Namibia': { lat: -22.9576, lng: 18.4904 },\n  'Botswana': { lat: -22.3285, lng: 24.6849 },\n  'Zambia': { lat: -13.1339, lng: 27.8493 },\n  'Malawi': { lat: -13.2543, lng: 34.3015 },\n  'Rwanda': { lat: -1.9403, lng: 29.8739 },\n  'Burundi': { lat: -3.3731, lng: 29.9189 },\n  'Senegal': { lat: 14.4974, lng: -14.4524 },\n  'Mali': { lat: 17.5707, lng: -3.9962 },\n  'Ivory Coast': { lat: 7.5400, lng: -5.5471 },\n  'Cameroon': { lat: 7.3697, lng: 12.3547 },\n  'Congo': { lat: -4.0383, lng: 21.7587 },\n  'DRC': { lat: -4.0383, lng: 21.7587 },\n  \n  // Oceania\n  'Australia': { lat: -25.2744, lng: 133.7751 },\n  'New Zealand': { lat: -40.9006, lng: 174.8860 },\n  'Papua New Guinea': { lat: -6.3150, lng: 143.9555 },\n  'Fiji': { lat: -17.7134, lng: 178.0650 },\n  'Solomon Islands': { lat: -9.6457, lng: 160.1562 },\n  'Vanuatu': { lat: -15.3767, lng: 166.9592 },\n  'Samoa': { lat: -13.7590, lng: -172.1046 },\n  'Tonga': { lat: -21.1789, lng: -175.1982 },\n  \n  // Eastern Europe & Russia\n  'Russia': { lat: 61.524, lng: 105.3188 },\n  'Ukraine': { lat: 48.3794, lng: 31.1656 },\n  \n  // Fallback\n  'Unknown': { lat: 0, lng: 0 }\n};\n\nconst results = [];\nlet cacheHits = 0;\nlet needsApi = 0;\n\nfor (const item of $input.all()) {\n  const json = item.json;\n  const location = json.llm_location || 'Unknown';\n  let coords = null;\n  let method = 'none';\n  \n  console.log(`Geocoding: \"${location}\"`);\n  \n  // 1. Check exact cache match\n  if (locationCache[location]) {\n    coords = locationCache[location];\n    method = 'cache-exact';\n    cacheHits++;\n    console.log(`  ✓ Cache hit: [${coords.lat}, ${coords.lng}]`);\n  }\n  // 2. Try partial match\n  else {\n    for (const [country, countryCoords] of Object.entries(locationCache)) {\n      if (country !== 'Unknown' && location.toLowerCase().includes(country.toLowerCase())) {\n        coords = countryCoords;\n        method = 'cache-partial';\n        cacheHits++;\n        console.log(`  ✓ Cache partial (${country}): [${coords.lat}, ${coords.lng}]`);\n        break;\n      }\n    }\n  }\n  \n  // 3. Mark for API call if needed\n  if (!coords && location !== 'Unknown') {\n    needsApi++;\n    method = 'needs-api';\n    coords = { lat: 0, lng: 0 }; // Temporary\n    console.log(`  → Needs API call`);\n  } else if (!coords) {\n    coords = { lat: 0, lng: 0 };\n    method = 'fallback';\n  }\n  \n  results.push({\n    json: {\n      ...json,\n      lat: coords.lat,\n      lng: coords.lng,\n      geocode_method: method\n    }\n  });\n}\n\nconsole.log(`Cache hits: ${cacheHits}, Need API: ${needsApi}, Total: ${results.length}`);\nreturn results;"
+        "jsCode": "// Multi-level geocoding with cache\nconst locationCache = {\n  // North America - Countries\n  'USA': { lat: 37.0902, lng: -95.7129 },\n  'United States': { lat: 37.0902, lng: -95.7129 },\n  'US': { lat: 37.0902, lng: -95.7129 },\n  'Canada': { lat: 56.1304, lng: -106.3468 },\n  'Mexico': { lat: 23.6345, lng: -102.5528 },\n  'Cuba': { lat: 21.5218, lng: -77.7812 },\n  'Jamaica': { lat: 18.1096, lng: -77.2975 },\n  'Haiti': { lat: 18.9712, lng: -72.2852 },\n  'Dominican Republic': { lat: 18.7357, lng: -70.1627 },\n  'Puerto Rico': { lat: 18.2208, lng: -66.5901 },\n  'Guatemala': { lat: 15.7835, lng: -90.2308 },\n  'Honduras': { lat: 15.2000, lng: -86.2419 },\n  'Nicaragua': { lat: 12.8654, lng: -85.2072 },\n  'Costa Rica': { lat: 9.7489, lng: -83.7534 },\n  'Panama': { lat: 8.5380, lng: -80.7821 },\n  \n  // US States\n  'Alabama': { lat: 32.3182, lng: -86.9023 },\n  'Alaska': { lat: 61.3707, lng: -152.4044 },\n  'Arizona': { lat: 33.7298, lng: -111.4312 },\n  'Arkansas': { lat: 34.9697, lng: -92.3731 },\n  'California': { lat: 36.1162, lng: -119.6816 },\n  'Colorado': { lat: 39.0598, lng: -105.3111 },\n  'Connecticut': { lat: 41.5978, lng: -72.7554 },\n  'Delaware': { lat: 39.3185, lng: -75.5071 },\n  'Florida': { lat: 27.7663, lng: -81.6868 },\n  'Georgia': { lat: 33.0406, lng: -83.6431 },\n  'Hawaii': { lat: 21.0943, lng: -157.4983 },\n  'Idaho': { lat: 44.2405, lng: -114.4788 },\n  'Illinois': { lat: 40.3495, lng: -88.9861 },\n  'Indiana': { lat: 39.8494, lng: -86.2583 },\n  'Iowa': { lat: 42.0115, lng: -93.2105 },\n  'Kansas': { lat: 38.5266, lng: -96.7265 },\n  'Kentucky': { lat: 37.6681, lng: -84.6701 },\n  'Louisiana': { lat: 31.1695, lng: -91.8678 },\n  'Maine': { lat: 44.6939, lng: -69.3819 },\n  'Maryland': { lat: 39.0639, lng: -76.8021 },\n  'Massachusetts': { lat: 42.2302, lng: -71.5301 },\n  'Michigan': { lat: 43.3266, lng: -84.5361 },\n  'Minnesota': { lat: 45.6945, lng: -93.9002 },\n  'Mississippi': { lat: 32.7416, lng: -89.6787 },\n  'Missouri': { lat: 38.4561, lng: -92.2884 },\n  'Montana': { lat: 46.9219, lng: -110.4544 },\n  'Nebraska': { lat: 41.1254, lng: -98.2681 },\n  'Nevada': { lat: 38.3135, lng: -117.0554 },\n  'New Hampshire': { lat: 43.4525, lng: -71.5639 },\n  'New Jersey': { lat: 40.2989, lng: -74.5210 },\n  'New Mexico': { lat: 34.8405, lng: -106.2485 },\n  'New York': { lat: 42.1657, lng: -74.9481 },\n  'North Carolina': { lat: 35.6301, lng: -79.8064 },\n  'North Dakota': { lat: 47.5289, lng: -99.7840 },\n  'Ohio': { lat: 40.3888, lng: -82.7649 },\n  'Oklahoma': { lat: 35.5653, lng: -96.9289 },\n  'Oregon': { lat: 44.5720, lng: -122.0709 },\n  'Pennsylvania': { lat: 40.5908, lng: -77.2098 },\n  'Rhode Island': { lat: 41.6809, lng: -71.5118 },\n  'South Carolina': { lat: 33.8569, lng: -80.9450 },\n  'South Dakota': { lat: 44.2998, lng: -99.4388 },\n  'Tennessee': { lat: 35.7478, lng: -86.6923 },\n  'Texas': { lat: 31.0545, lng: -97.5635 },\n  'Utah': { lat: 40.1500, lng: -111.8624 },\n  'Vermont': { lat: 44.0459, lng: -72.7107 },\n  'Virginia': { lat: 37.7693, lng: -78.1700 },\n  'Washington': { lat: 47.4009, lng: -121.4905 },\n  'West Virginia': { lat: 38.4912, lng: -80.9545 },\n  'Wisconsin': { lat: 44.2685, lng: -89.6165 },\n  'Wyoming': { lat: 42.7559, lng: -107.3025 },\n  'District of Columbia': { lat: 38.9072, lng: -77.0369 },\n  'Washington DC': { lat: 38.9072, lng: -77.0369 },\n  'DC': { lat: 38.9072, lng: -77.0369 },\n  \n  // Major US Cities\n  'New York City': { lat: 40.7128, lng: -74.0060 },\n  'Los Angeles': { lat: 34.0522, lng: -118.2437 },\n  'Chicago': { lat: 41.8781, lng: -87.6298 },\n  'Houston': { lat: 29.7604, lng: -95.3698 },\n  'Phoenix': { lat: 33.4484, lng: -112.0740 },\n  'Philadelphia': { lat: 39.9526, lng: -75.1652 },\n  'San Antonio': { lat: 29.4241, lng: -98.4936 },\n  'San Diego': { lat: 32.7157, lng: -117.1611 },\n  'Dallas': { lat: 32.7767, lng: -96.7970 },\n  'San Jose': { lat: 37.3382, lng: -121.8863 },\n  'Austin': { lat: 30.2672, lng: -97.7431 },\n  'Jacksonville': { lat: 30.3322, lng: -81.6557 },\n  'Fort Worth': { lat: 32.7555, lng: -97.3308 },\n  'Columbus': { lat: 39.9612, lng: -82.9988 },\n  'Indianapolis': { lat: 39.7684, lng: -86.1581 },\n  'Charlotte': { lat: 35.2271, lng: -80.8431 },\n  'San Francisco': { lat: 37.7749, lng: -122.4194 },\n  'Seattle': { lat: 47.6062, lng: -122.3321 },\n  'Denver': { lat: 39.7392, lng: -104.9903 },\n  'Boston': { lat: 42.3601, lng: -71.0589 },\n  'Nashville': { lat: 36.1627, lng: -86.7816 },\n  'Detroit': { lat: 42.3314, lng: -83.0458 },\n  'Portland': { lat: 45.5152, lng: -122.6784 },\n  'Las Vegas': { lat: 36.1699, lng: -115.1398 },\n  'Miami': { lat: 25.7617, lng: -80.1918 },\n  'Atlanta': { lat: 33.7490, lng: -84.3880 },\n  'New Orleans': { lat: 29.9511, lng: -90.0715 },\n  'Salt Lake City': { lat: 40.7608, lng: -111.8910 },\n  'Anchorage': { lat: 61.2181, lng: -149.9003 },\n  'Honolulu': { lat: 21.3099, lng: -157.8581 },\n  \n  // Canadian Cities\n  'Toronto': { lat: 43.6532, lng: -79.3832 },\n  'Montreal': { lat: 45.5017, lng: -73.5673 },\n  'Vancouver': { lat: 49.2827, lng: -123.1207 },\n  'Calgary': { lat: 51.0447, lng: -114.0719 },\n  'Edmonton': { lat: 53.5461, lng: -113.4938 },\n  'Ottawa': { lat: 45.4215, lng: -75.6972 },\n  'Winnipeg': { lat: 49.8951, lng: -97.1384 },\n  'Quebec City': { lat: 46.8139, lng: -71.2080 },\n  \n  // Mexican Cities\n  'Mexico City': { lat: 19.4326, lng: -99.1332 },\n  'Guadalajara': { lat: 20.6597, lng: -103.3496 },\n  'Monterrey': { lat: 25.6866, lng: -100.3161 },\n  'Tijuana': { lat: 32.5149, lng: -117.0382 },\n  'Cancun': { lat: 21.1619, lng: -86.8515 },\n  \n  // South America\n  'Brazil': { lat: -14.2350, lng: -51.9253 },\n  'Argentina': { lat: -38.4161, lng: -63.6167 },\n  'Chile': { lat: -35.6751, lng: -71.5430 },\n  'Colombia': { lat: 4.5709, lng: -74.2973 },\n  'Peru': { lat: -9.1900, lng: -75.0152 },\n  'Venezuela': { lat: 6.4238, lng: -66.5897 },\n  'Ecuador': { lat: -1.8312, lng: -78.1834 },\n  'Bolivia': { lat: -16.2902, lng: -63.5887 },\n  'Paraguay': { lat: -23.4425, lng: -58.4438 },\n  'Uruguay': { lat: -32.5228, lng: -55.7658 },\n  'Guyana': { lat: 4.8604, lng: -58.9302 },\n  'Suriname': { lat: 3.9193, lng: -56.0278 },\n  \n  // South American Cities\n  'Sao Paulo': { lat: -23.5505, lng: -46.6333 },\n  'Rio de Janeiro': { lat: -22.9068, lng: -43.1729 },\n  'Buenos Aires': { lat: -34.6037, lng: -58.3816 },\n  'Lima': { lat: -12.0464, lng: -77.0428 },\n  'Bogota': { lat: 4.7110, lng: -74.0721 },\n  'Santiago': { lat: -33.4489, lng: -70.6693 },\n  'Caracas': { lat: 10.4806, lng: -66.9036 },\n  'Quito': { lat: -0.1807, lng: -78.4678 },\n  'La Paz': { lat: -16.5000, lng: -68.1500 },\n  'Montevideo': { lat: -34.9011, lng: -56.1645 },\n  \n  // Europe\n  'UK': { lat: 55.3781, lng: -3.4360 },\n  'United Kingdom': { lat: 55.3781, lng: -3.4360 },\n  'England': { lat: 52.3555, lng: -1.1743 },\n  'Scotland': { lat: 56.4907, lng: -4.2026 },\n  'Wales': { lat: 52.1307, lng: -3.7837 },\n  'Ireland': { lat: 53.4129, lng: -8.2439 },\n  'Northern Ireland': { lat: 54.7877, lng: -6.4923 },\n  'France': { lat: 46.2276, lng: 2.2137 },\n  'Germany': { lat: 51.1657, lng: 10.4515 },\n  'Italy': { lat: 41.8719, lng: 12.5674 },\n  'Spain': { lat: 40.4637, lng: -3.7492 },\n  'Portugal': { lat: 39.3999, lng: -8.2245 },\n  'Greece': { lat: 39.0742, lng: 21.8243 },\n  'Netherlands': { lat: 52.1326, lng: 5.2913 },\n  'Belgium': { lat: 50.5039, lng: 4.4699 },\n  'Switzerland': { lat: 46.8182, lng: 8.2275 },\n  'Austria': { lat: 47.5162, lng: 14.5501 },\n  'Poland': { lat: 51.9194, lng: 19.1451 },\n  'Czech Republic': { lat: 49.8175, lng: 15.4730 },\n  'Slovakia': { lat: 48.6690, lng: 19.6990 },\n  'Hungary': { lat: 47.1625, lng: 19.5033 },\n  'Romania': { lat: 45.9432, lng: 24.9668 },\n  'Bulgaria': { lat: 42.7339, lng: 25.4858 },\n  'Serbia': { lat: 44.0165, lng: 21.0059 },\n  'Croatia': { lat: 45.1, lng: 15.2 },\n  'Bosnia': { lat: 43.9159, lng: 17.6791 },\n  'Albania': { lat: 41.1533, lng: 20.1683 },\n  'North Macedonia': { lat: 41.6086, lng: 21.7453 },\n  'Slovenia': { lat: 46.1512, lng: 14.9955 },\n  'Montenegro': { lat: 42.7087, lng: 19.3744 },\n  'Sweden': { lat: 60.1282, lng: 18.6435 },\n  'Norway': { lat: 60.4720, lng: 8.4689 },\n  'Denmark': { lat: 56.2639, lng: 9.5018 },\n  'Finland': { lat: 61.9241, lng: 25.7482 },\n  'Iceland': { lat: 64.9631, lng: -19.0208 },\n  'Estonia': { lat: 58.5953, lng: 25.0136 },\n  'Latvia': { lat: 56.8796, lng: 24.6032 },\n  'Lithuania': { lat: 55.1694, lng: 23.8813 },\n  'Belarus': { lat: 53.7098, lng: 27.9534 },\n  'Moldova': { lat: 47.4116, lng: 28.3699 },\n  \n  // European Cities\n  'London': { lat: 51.5074, lng: -0.1278 },\n  'Paris': { lat: 48.8566, lng: 2.3522 },\n  'Berlin': { lat: 52.5200, lng: 13.4050 },\n  'Madrid': { lat: 40.4168, lng: -3.7038 },\n  'Rome': { lat: 41.9028, lng: 12.4964 },\n  'Amsterdam': { lat: 52.3676, lng: 4.9041 },\n  'Vienna': { lat: 48.2082, lng: 16.3738 },\n  'Brussels': { lat: 50.8503, lng: 4.3517 },\n  'Athens': { lat: 37.9838, lng: 23.7275 },\n  'Lisbon': { lat: 38.7223, lng: -9.1393 },\n  'Stockholm': { lat: 59.3293, lng: 18.0686 },\n  'Copenhagen': { lat: 55.6761, lng: 12.5683 },\n  'Oslo': { lat: 59.9139, lng: 10.7522 },\n  'Helsinki': { lat: 60.1695, lng: 24.9354 },\n  'Prague': { lat: 50.0755, lng: 14.4378 },\n  'Budapest': { lat: 47.4979, lng: 19.0402 },\n  'Warsaw': { lat: 52.2297, lng: 21.0122 },\n  'Zurich': { lat: 47.3769, lng: 8.5417 },\n  'Dublin': { lat: 53.3498, lng: -6.2603 },\n  'Barcelona': { lat: 41.3851, lng: 2.1734 },\n  'Munich': { lat: 48.1351, lng: 11.5820 },\n  'Milan': { lat: 45.4642, lng: 9.1900 },\n  'Hamburg': { lat: 53.5511, lng: 9.9937 },\n  'Reykjavik': { lat: 64.1466, lng: -21.9426 },\n  \n  // Asia\n  'China': { lat: 35.8617, lng: 104.1954 },\n  'India': { lat: 20.5937, lng: 78.9629 },\n  'Japan': { lat: 36.2048, lng: 138.2529 },\n  'South Korea': { lat: 35.9078, lng: 127.7669 },\n  'North Korea': { lat: 40.3399, lng: 127.5101 },\n  'Vietnam': { lat: 14.0583, lng: 108.2772 },\n  'Thailand': { lat: 15.8700, lng: 100.9925 },\n  'Myanmar': { lat: 21.9162, lng: 95.9560 },\n  'Burma': { lat: 21.9162, lng: 95.9560 },\n  'Cambodia': { lat: 12.5657, lng: 104.9910 },\n  'Laos': { lat: 19.8563, lng: 102.4955 },\n  'Malaysia': { lat: 4.2105, lng: 101.9758 },\n  'Singapore': { lat: 1.3521, lng: 103.8198 },\n  'Indonesia': { lat: -0.7893, lng: 113.9213 },\n  'Philippines': { lat: 12.8797, lng: 121.7740 },\n  'Bangladesh': { lat: 23.6850, lng: 90.3563 },\n  'Pakistan': { lat: 30.3753, lng: 69.3451 },\n  'Afghanistan': { lat: 33.9391, lng: 67.7100 },\n  'Nepal': { lat: 28.3949, lng: 84.1240 },\n  'Bhutan': { lat: 27.5142, lng: 90.4336 },\n  'Sri Lanka': { lat: 7.8731, lng: 80.7718 },\n  'Mongolia': { lat: 46.8625, lng: 103.8467 },\n  'Kazakhstan': { lat: 48.0196, lng: 66.9237 },\n  'Uzbekistan': { lat: 41.3775, lng: 64.5853 },\n  'Turkmenistan': { lat: 38.9697, lng: 59.5563 },\n  'Kyrgyzstan': { lat: 41.2044, lng: 74.7661 },\n  'Tajikistan': { lat: 38.8610, lng: 71.2761 },\n  'Taiwan': { lat: 23.6978, lng: 120.9605 },\n  'Hong Kong': { lat: 22.3193, lng: 114.1694 },\n  \n  // Asian Cities\n  'Tokyo': { lat: 35.6762, lng: 139.6503 },\n  'Delhi': { lat: 28.7041, lng: 77.1025 },\n  'Shanghai': { lat: 31.2304, lng: 121.4737 },\n  'Mumbai': { lat: 19.0760, lng: 72.8777 },\n  'Beijing': { lat: 39.9042, lng: 116.4074 },\n  'Dhaka': { lat: 23.8103, lng: 90.4125 },\n  'Osaka': { lat: 34.6937, lng: 135.5023 },\n  'Karachi': { lat: 24.8607, lng: 67.0011 },\n  'Bangkok': { lat: 13.7563, lng: 100.5018 },\n  'Seoul': { lat: 37.5665, lng: 126.9780 },\n  'Jakarta': { lat: -6.2088, lng: 106.8456 },\n  'Manila': { lat: 14.5995, lng: 120.9842 },\n  'Ho Chi Minh City': { lat: 10.8231, lng: 106.6297 },\n  'Hanoi': { lat: 21.0285, lng: 105.8542 },\n  'Taipei': { lat: 25.0330, lng: 121.5654 },\n  'Kuala Lumpur': { lat: 3.1390, lng: 101.6869 },\n  'Kolkata': { lat: 22.5726, lng: 88.3639 },\n  'Bangalore': { lat: 12.9716, lng: 77.5946 },\n  'Chennai': { lat: 13.0827, lng: 80.2707 },\n  'Hyderabad': { lat: 17.3850, lng: 78.4867 },\n  'Lahore': { lat: 31.5204, lng: 74.3587 },\n  'Kathmandu': { lat: 27.7172, lng: 85.3240 },\n  'Colombo': { lat: 6.9271, lng: 79.8612 },\n  'Islamabad': { lat: 33.6844, lng: 73.0479 },\n  'Kabul': { lat: 34.5553, lng: 69.2075 },\n  'Ulaanbaatar': { lat: 47.8864, lng: 106.9057 },\n  'Tashkent': { lat: 41.2995, lng: 69.2401 },\n  'Almaty': { lat: 43.2220, lng: 76.8512 },\n  \n  // Middle East\n  'Turkey': { lat: 38.9637, lng: 35.2433 },\n  'Iran': { lat: 32.4279, lng: 53.6880 },\n  'Iraq': { lat: 33.2232, lng: 43.6793 },\n  'Syria': { lat: 34.8021, lng: 38.9968 },\n  'Lebanon': { lat: 33.8547, lng: 35.8623 },\n  'Jordan': { lat: 30.5852, lng: 36.2384 },\n  'Israel': { lat: 31.0461, lng: 34.8516 },\n  'Palestine': { lat: 31.9522, lng: 35.2332 },\n  'Gaza': { lat: 31.3547, lng: 34.3088 },\n  'West Bank': { lat: 31.9466, lng: 35.3027 },\n  'Saudi Arabia': { lat: 23.8859, lng: 45.0792 },\n  'Yemen': { lat: 15.5527, lng: 48.5164 },\n  'Oman': { lat: 21.4735, lng: 55.9754 },\n  'UAE': { lat: 23.4241, lng: 53.8478 },\n  'United Arab Emirates': { lat: 23.4241, lng: 53.8478 },\n  'Kuwait': { lat: 29.3117, lng: 47.4818 },\n  'Qatar': { lat: 25.3548, lng: 51.1839 },\n  'Bahrain': { lat: 26.0667, lng: 50.5577 },\n  \n  // Middle Eastern Cities\n  'Istanbul': { lat: 41.0082, lng: 28.9784 },\n  'Tehran': { lat: 35.6892, lng: 51.3890 },\n  'Baghdad': { lat: 33.3152, lng: 44.3661 },\n  'Riyadh': { lat: 24.7136, lng: 46.6753 },\n  'Dubai': { lat: 25.2048, lng: 55.2708 },\n  'Abu Dhabi': { lat: 24.4539, lng: 54.3773 },\n  'Doha': { lat: 25.2854, lng: 51.5310 },\n  'Kuwait City': { lat: 29.3759, lng: 47.9774 },\n  'Beirut': { lat: 33.8886, lng: 35.4955 },\n  'Damascus': { lat: 33.5138, lng: 36.2765 },\n  'Amman': { lat: 31.9454, lng: 35.9284 },\n  'Jerusalem': { lat: 31.7683, lng: 35.2137 },\n  'Tel Aviv': { lat: 32.0853, lng: 34.7818 },\n  'Ankara': { lat: 39.9334, lng: 32.8597 },\n  'Muscat': { lat: 23.5880, lng: 58.3829 },\n  \n  // Africa\n  'Egypt': { lat: 26.8206, lng: 30.8025 },\n  'South Africa': { lat: -30.5595, lng: 22.9375 },\n  'Nigeria': { lat: 9.0820, lng: 8.6753 },\n  'Kenya': { lat: -0.0236, lng: 37.9062 },\n  'Ethiopia': { lat: 9.1450, lng: 40.4897 },\n  'Tanzania': { lat: -6.3690, lng: 34.8888 },\n  'Uganda': { lat: 1.3733, lng: 32.2903 },\n  'Ghana': { lat: 7.9465, lng: -1.0232 },\n  'Morocco': { lat: 31.7917, lng: -7.0926 },\n  'Algeria': { lat: 28.0339, lng: 1.6596 },\n  'Tunisia': { lat: 33.8869, lng: 9.5375 },\n  'Libya': { lat: 26.3351, lng: 17.2283 },\n  'Sudan': { lat: 12.8628, lng: 30.2176 },\n  'South Sudan': { lat: 6.8770, lng: 31.3070 },\n  'Somalia': { lat: 5.1521, lng: 46.1996 },\n  'Zimbabwe': { lat: -19.0154, lng: 29.1549 },\n  'Mozambique': { lat: -18.6657, lng: 35.5296 },\n  'Angola': { lat: -11.2027, lng: 17.8739 },\n  'Namibia': { lat: -22.9576, lng: 18.4904 },\n  'Botswana': { lat: -22.3285, lng: 24.6849 },\n  'Zambia': { lat: -13.1339, lng: 27.8493 },\n  'Malawi': { lat: -13.2543, lng: 34.3015 },\n  'Rwanda': { lat: -1.9403, lng: 29.8739 },\n  'Burundi': { lat: -3.3731, lng: 29.9189 },\n  'Senegal': { lat: 14.4974, lng: -14.4524 },\n  'Mali': { lat: 17.5707, lng: -3.9962 },\n  'Ivory Coast': { lat: 7.5400, lng: -5.5471 },\n  'Cameroon': { lat: 7.3697, lng: 12.3547 },\n  'Congo': { lat: -4.0383, lng: 21.7587 },\n  'DRC': { lat: -4.0383, lng: 21.7587 },\n  \n  // African Cities\n  'Cairo': { lat: 30.0444, lng: 31.2357 },\n  'Lagos': { lat: 6.5244, lng: 3.3792 },\n  'Johannesburg': { lat: -26.2041, lng: 28.0473 },\n  'Nairobi': { lat: -1.2921, lng: 36.8219 },\n  'Cape Town': { lat: -33.9249, lng: 18.4241 },\n  'Kinshasa': { lat: -4.4419, lng: 15.2663 },\n  'Addis Ababa': { lat: 9.0320, lng: 38.7469 },\n  'Casablanca': { lat: 33.5731, lng: -7.5898 },\n  'Algiers': { lat: 36.7538, lng: 3.0588 },\n  'Accra': { lat: 5.6037, lng: -0.1870 },\n  'Dar es Salaam': { lat: -6.7924, lng: 39.2083 },\n  'Khartoum': { lat: 15.5007, lng: 32.5599 },\n  'Abidjan': { lat: 5.3600, lng: -4.0083 },\n  'Luanda': { lat: -8.8383, lng: 13.2344 },\n  'Dakar': { lat: 14.7167, lng: -17.4677 },\n  'Tunis': { lat: 36.8065, lng: 10.1815 },\n  'Pretoria': { lat: -25.7479, lng: 28.2293 },\n  'Kampala': { lat: 0.3476, lng: 32.5825 },\n  'Mogadishu': { lat: 2.0469, lng: 45.3182 },\n  'Harare': { lat: -17.8252, lng: 31.0335 },\n  \n  // Oceania\n  'Australia': { lat: -25.2744, lng: 133.7751 },\n  'New Zealand': { lat: -40.9006, lng: 174.8860 },\n  'Papua New Guinea': { lat: -6.3150, lng: 143.9555 },\n  'Fiji': { lat: -17.7134, lng: 178.0650 },\n  'Solomon Islands': { lat: -9.6457, lng: 160.1562 },\n  'Vanuatu': { lat: -15.3767, lng: 166.9592 },\n  'Samoa': { lat: -13.7590, lng: -172.1046 },\n  'Tonga': { lat: -21.1789, lng: -175.1982 },\n  \n  // Oceania Cities\n  'Sydney': { lat: -33.8688, lng: 151.2093 },\n  'Melbourne': { lat: -37.8136, lng: 144.9631 },\n  'Brisbane': { lat: -27.4698, lng: 153.0251 },\n  'Perth': { lat: -31.9505, lng: 115.8605 },\n  'Adelaide': { lat: -34.9285, lng: 138.6007 },\n  'Auckland': { lat: -36.8485, lng: 174.7633 },\n  'Wellington': { lat: -41.2865, lng: 174.7762 },\n  'Canberra': { lat: -35.2809, lng: 149.1300 },\n  'Christchurch': { lat: -43.5321, lng: 172.6362 },\n  'Port Moresby': { lat: -9.4438, lng: 147.1803 },\n  'Suva': { lat: -18.1248, lng: 178.4501 },\n  \n  // Eastern Europe & Russia\n  'Russia': { lat: 61.524, lng: 105.3188 },\n  'Ukraine': { lat: 48.3794, lng: 31.1656 },\n  'Moscow': { lat: 55.7558, lng: 37.6173 },\n  'Saint Petersburg': { lat: 59.9343, lng: 30.3351 },\n  'Kyiv': { lat: 50.4501, lng: 30.5234 },\n  'Kiev': { lat: 50.4501, lng: 30.5234 },\n  'Minsk': { lat: 53.9045, lng: 27.5615 },\n  'Vladivostok': { lat: 43.1150, lng: 131.8855 },\n  \n  // EARTHQUAKE PRONE ZONES - Ring of Fire & Major Fault Lines\n  \n  // Pacific Ring of Fire - West Coast Americas\n  'San Andreas Fault': { lat: 36.9741, lng: -121.9018 },\n  'Cascadia Subduction Zone': { lat: 44.5, lng: -124.0 },\n  \n  // Alaska - High seismic activity\n  'Anchorage Earthquake Zone': { lat: 61.2181, lng: -149.9003 },\n  'Aleutian Islands': { lat: 52.0, lng: -176.0 },\n  \n  // Japan - Ring of Fire\n  'Tokyo Earthquake Zone': { lat: 35.6762, lng: 139.6503 },\n  'Kobe': { lat: 34.6901, lng: 135.1955 },\n  'Sendai': { lat: 38.2682, lng: 140.8694 },\n  'Fukushima': { lat: 37.7500, lng: 140.4667 },\n  'Kumamoto': { lat: 32.8031, lng: 130.7079 },\n  'Hokkaido': { lat: 43.0642, lng: 141.3469 },\n  \n  // Indonesia - Ring of Fire (most seismically active)\n  'Sumatra': { lat: -0.5897, lng: 101.3431 },\n  'Java': { lat: -7.6145, lng: 110.7122 },\n  'Banda Aceh': { lat: 5.5483, lng: 95.3238 },\n  'Padang': { lat: -0.9471, lng: 100.4172 },\n  'Yogyakarta': { lat: -7.7956, lng: 110.3695 },\n  'Bali': { lat: -8.3405, lng: 115.0920 },\n  'Sulawesi': { lat: -2.0, lng: 120.0 },\n  'Palu': { lat: -0.8999, lng: 119.8707 },\n  'Lombok': { lat: -8.6500, lng: 116.3242 },\n  \n  // Philippines - Ring of Fire\n  'Luzon': { lat: 16.0, lng: 121.0 },\n  'Mindanao': { lat: 7.0, lng: 125.0 },\n  'Baguio': { lat: 16.4023, lng: 120.5960 },\n  'Cebu': { lat: 10.3157, lng: 123.8854 },\n  \n  // New Zealand - Ring of Fire\n  'Canterbury': { lat: -43.5321, lng: 172.6362 },\n  'Napier': { lat: -39.4928, lng: 176.9120 },\n  'Wellington Fault': { lat: -41.2865, lng: 174.7762 },\n  \n  // Chile - Nazca Plate subduction\n  'Valparaiso': { lat: -33.0472, lng: -71.6127 },\n  'Concepcion': { lat: -36.8201, lng: -73.0444 },\n  'Valdivia': { lat: -39.8142, lng: -73.2459 },\n  'Antofagasta': { lat: -23.6509, lng: -70.3975 },\n  'Iquique': { lat: -20.2307, lng: -70.1355 },\n  \n  // Peru - Ring of Fire\n  'Arequipa': { lat: -16.4090, lng: -71.5375 },\n  'Pisco': { lat: -13.7099, lng: -76.2053 },\n  'Cusco': { lat: -13.5319, lng: -71.9675 },\n  \n  // Ecuador - Ring of Fire\n  'Guayaquil': { lat: -2.1709, lng: -79.9224 },\n  'Cuenca': { lat: -2.9001, lng: -79.0059 },\n  \n  // Central America - Ring of Fire\n  'Guatemala City': { lat: 14.6349, lng: -90.5069 },\n  'San Salvador': { lat: 13.6929, lng: -89.2182 },\n  'Managua': { lat: 12.1364, lng: -86.2514 },\n  \n  // Mexico - Ring of Fire & fault zones\n  'Mexico City Earthquake Zone': { lat: 19.4326, lng: -99.1332 },\n  'Acapulco': { lat: 16.8531, lng: -99.8237 },\n  'Oaxaca': { lat: 17.0732, lng: -96.7266 },\n  'Chiapas': { lat: 16.7569, lng: -93.1292 },\n  'Guerrero': { lat: 17.4392, lng: -99.5451 },\n  'Michoacan': { lat: 19.5665, lng: -101.7068 },\n  \n  // Taiwan - Ring of Fire\n  'Hualien': { lat: 23.9871, lng: 121.6015 },\n  'Taitung': { lat: 22.7583, lng: 121.1444 },\n  \n  // China - Multiple fault zones\n  'Sichuan': { lat: 30.6171, lng: 102.7103 },\n  'Chengdu': { lat: 30.5728, lng: 104.0668 },\n  'Wenchuan': { lat: 31.4742, lng: 103.5850 },\n  'Yunnan': { lat: 25.0406, lng: 101.3431 },\n  'Xinjiang': { lat: 41.8, lng: 85.0 },\n  'Tangshan': { lat: 39.6304, lng: 118.1768 },\n  \n  // Nepal & Himalayas - Indian-Eurasian plate collision\n  'Nepal Earthquake Zone': { lat: 28.3949, lng: 84.1240 },\n  'Gorkha': { lat: 28.0, lng: 84.6333 },\n  'Pokhara': { lat: 28.2096, lng: 83.9856 },\n  \n  // India - Multiple seismic zones\n  'Kashmir': { lat: 34.0837, lng: 74.7973 },\n  'Gujarat': { lat: 22.2587, lng: 71.1924 },\n  'Bhuj': { lat: 23.2420, lng: 69.6669 },\n  'Uttarakhand': { lat: 30.0668, lng: 79.0193 },\n  'Assam': { lat: 26.2006, lng: 92.9376 },\n  \n  // Pakistan - Active faults\n  'Balochistan': { lat: 28.4894, lng: 65.0960 },\n  'Quetta': { lat: 30.1798, lng: 66.9750 },\n  'Muzaffarabad': { lat: 34.3700, lng: 73.4711 },\n  \n  // Iran - Multiple active faults\n  'Bam': { lat: 29.1062, lng: 58.3570 },\n  'Kermanshah': { lat: 34.3142, lng: 47.0650 },\n  'Tabriz': { lat: 38.0800, lng: 46.2919 },\n  \n  // Turkey - North Anatolian Fault\n  'Izmit': { lat: 40.7654, lng: 29.9208 },\n  'Erzincan': { lat: 39.7500, lng: 39.5000 },\n  'Van': { lat: 38.4891, lng: 43.4089 },\n  \n  // Italy - Eurasian-African plate boundary\n  'L\\'Aquila': { lat: 42.3498, lng: 13.3995 },\n  'Amatrice': { lat: 42.6297, lng: 13.2867 },\n  'Messina': { lat: 38.1937, lng: 15.5542 },\n  'Sicily': { lat: 37.5999, lng: 14.0154 },\n  'Mount Etna': { lat: 37.7510, lng: 14.9934 },\n  \n  // Greece - Hellenic Arc\n  'Crete': { lat: 35.2401, lng: 24.8093 },\n  'Santorini': { lat: 36.3932, lng: 25.4615 },\n  'Thessaloniki': { lat: 40.6401, lng: 22.9444 },\n  \n  // Caribbean - Multiple fault zones\n  'Haiti Earthquake Zone': { lat: 18.9712, lng: -72.2852 },\n  'Port-au-Prince': { lat: 18.5944, lng: -72.3074 },\n  'Dominican Republic Fault': { lat: 18.7357, lng: -70.1627 },\n  \n  // Middle East - Dead Sea Transform\n  'Dead Sea Fault': { lat: 31.5, lng: 35.5 },\n  \n  // California - San Andreas & other faults\n  'San Francisco Bay Area': { lat: 37.7749, lng: -122.4194 },\n  'Los Angeles Earthquake Zone': { lat: 34.0522, lng: -118.2437 },\n  'San Bernardino': { lat: 34.1083, lng: -117.2898 },\n  'Riverside': { lat: 33.9533, lng: -117.3962 },\n  'Imperial Valley': { lat: 32.8, lng: -115.5 },\n  'Northridge': { lat: 34.2283, lng: -118.5366 },\n  \n  // Pacific Northwest\n  'Portland Earthquake Zone': { lat: 45.5152, lng: -122.6784 },\n  'Seattle Earthquake Zone': { lat: 47.6062, lng: -122.3321 },\n  'Vancouver Earthquake Zone': { lat: 49.2827, lng: -123.1207 },\n  'Victoria': { lat: 48.4284, lng: -123.3656 },\n  \n  // Papua New Guinea - Ring of Fire\n  'New Britain': { lat: -5.5, lng: 150.0 },\n  'Rabaul': { lat: -4.2000, lng: 152.1833 },\n  \n  // Afghanistan - Hindu Kush seismic zone\n  'Hindu Kush': { lat: 36.0, lng: 71.0 },\n  \n  // Vanuatu - Ring of Fire\n  'Port Vila': { lat: -17.7333, lng: 168.3273 },\n  \n  // Myanmar - Multiple fault zones\n  'Sagaing Fault': { lat: 21.9, lng: 95.9 },\n  'Mandalay': { lat: 21.9588, lng: 96.0891 },\n  \n  // Nicaragua - Central America volcanic arc\n  'Managua Fault Zone': { lat: 12.1364, lng: -86.2514 },\n  'Leon': { lat: 12.4352, lng: -86.8790 },\n  \n  // El Salvador - Volcanic arc\n  'San Salvador Fault': { lat: 13.6929, lng: -89.2182 },\n  \n  // Costa Rica - Subduction zone\n  'San Jose Earthquake Zone': { lat: 9.9281, lng: -84.0907 },\n  \n  // Iceland - Mid-Atlantic Ridge\n  'Reykjanes': { lat: 64.0, lng: -22.7 },\n  'Thingvellir': { lat: 64.2559, lng: -21.1300 },\n  \n  // Armenia - Caucasus seismic zone\n  'Yerevan': { lat: 40.1792, lng: 44.4991 },\n  'Spitak': { lat: 40.8331, lng: 44.2658 },\n  \n  // Georgia - Caucasus seismic zone\n  'Tbilisi': { lat: 41.7151, lng: 44.8271 },\n  \n  // Azerbaijan - Caucasus seismic zone\n  'Baku': { lat: 40.4093, lng: 49.8671 },\n  \n  // Solomon Islands - Ring of Fire\n  'Honiara': { lat: -9.4456, lng: 159.9729 },\n  \n  // Tonga - Ring of Fire\n  'Nuku\\'alofa': { lat: -21.1393, lng: -175.2221 },\n  \n  // Samoa - Ring of Fire\n  'Apia': { lat: -13.8506, lng: -171.7513 },\n  \n  // OCEANIC REGIONS & BASINS\n  \n  // Pacific Ocean Regions\n  'Pacific Ocean': { lat: 0.0, lng: -160.0 },\n  'North Pacific': { lat: 30.0, lng: -150.0 },\n  'South Pacific': { lat: -20.0, lng: -140.0 },\n  'East Pacific': { lat: 0.0, lng: -110.0 },\n  'West Pacific': { lat: 10.0, lng: 140.0 },\n  'Central Pacific': { lat: 5.0, lng: -160.0 },\n  'Northwest Pacific': { lat: 20.0, lng: 140.0 },\n  'Northeast Pacific': { lat: 35.0, lng: -140.0 },\n  'Southwest Pacific': { lat: -20.0, lng: 160.0 },\n  'Southeast Pacific': { lat: -20.0, lng: -100.0 },\n  'Tropical Pacific': { lat: 0.0, lng: -150.0 },\n  'Western Pacific Basin': { lat: 15.0, lng: 135.0 },\n  'Eastern Pacific Basin': { lat: 10.0, lng: -105.0 },\n  \n  // Atlantic Ocean Regions\n  'Atlantic Ocean': { lat: 25.0, lng: -40.0 },\n  'North Atlantic': { lat: 40.0, lng: -40.0 },\n  'South Atlantic': { lat: -20.0, lng: -20.0 },\n  'East Atlantic': { lat: 20.0, lng: -20.0 },\n  'West Atlantic': { lat: 25.0, lng: -60.0 },\n  'Central Atlantic': { lat: 10.0, lng: -35.0 },\n  'Northwest Atlantic': { lat: 40.0, lng: -50.0 },\n  'Northeast Atlantic': { lat: 45.0, lng: -20.0 },\n  'Southwest Atlantic': { lat: -30.0, lng: -40.0 },\n  'Southeast Atlantic': { lat: -20.0, lng: 0.0 },\n  'Tropical Atlantic': { lat: 10.0, lng: -40.0 },\n  'Atlantic Basin': { lat: 20.0, lng: -50.0 },\n  \n  // Indian Ocean Regions\n  'Indian Ocean': { lat: -20.0, lng: 80.0 },\n  'North Indian Ocean': { lat: 10.0, lng: 75.0 },\n  'South Indian Ocean': { lat: -30.0, lng: 80.0 },\n  'East Indian Ocean': { lat: -10.0, lng: 100.0 },\n  'West Indian Ocean': { lat: -10.0, lng: 60.0 },\n  'Central Indian Ocean': { lat: -15.0, lng: 80.0 },\n  'Bay of Bengal': { lat: 15.0, lng: 88.0 },\n  'Arabian Sea': { lat: 15.0, lng: 65.0 },\n  \n  // Caribbean & Gulf Regions\n  'Caribbean Sea': { lat: 15.0, lng: -75.0 },\n  'Caribbean Basin': { lat: 15.0, lng: -75.0 },\n  'Eastern Caribbean': { lat: 15.0, lng: -65.0 },\n  'Western Caribbean': { lat: 17.0, lng: -82.0 },\n  'Southern Caribbean': { lat: 12.0, lng: -70.0 },\n  'Gulf of Mexico': { lat: 25.0, lng: -90.0 },\n  'Bay of Campeche': { lat: 20.0, lng: -92.0 },\n  \n  // Mediterranean & European Seas\n  'Mediterranean Sea': { lat: 35.0, lng: 18.0 },\n  'Eastern Mediterranean': { lat: 34.0, lng: 30.0 },\n  'Western Mediterranean': { lat: 38.0, lng: 5.0 },\n  'Aegean Sea': { lat: 38.0, lng: 25.0 },\n  'Adriatic Sea': { lat: 43.0, lng: 15.0 },\n  'Tyrrhenian Sea': { lat: 40.0, lng: 12.0 },\n  'Ionian Sea': { lat: 38.0, lng: 18.0 },\n  'Black Sea': { lat: 43.0, lng: 35.0 },\n  'Baltic Sea': { lat: 58.0, lng: 20.0 },\n  'North Sea': { lat: 56.0, lng: 3.0 },\n  'Norwegian Sea': { lat: 68.0, lng: 5.0 },\n  \n  // Asian Seas\n  'South China Sea': { lat: 12.0, lng: 115.0 },\n  'East China Sea': { lat: 30.0, lng: 125.0 },\n  'Yellow Sea': { lat: 36.0, lng: 123.0 },\n  'Sea of Japan': { lat: 40.0, lng: 135.0 },\n  'Philippine Sea': { lat: 20.0, lng: 130.0 },\n  'Andaman Sea': { lat: 10.0, lng: 96.0 },\n  'Java Sea': { lat: -5.0, lng: 110.0 },\n  'Celebes Sea': { lat: 3.0, lng: 122.0 },\n  'Sulu Sea': { lat: 8.0, lng: 120.0 },\n  'Coral Sea': { lat: -15.0, lng: 155.0 },\n  'Tasman Sea': { lat: -35.0, lng: 160.0 },\n  \n  // Polar Regions\n  'Arctic Ocean': { lat: 85.0, lng: 0.0 },\n  'Southern Ocean': { lat: -65.0, lng: 0.0 },\n  'Bering Sea': { lat: 58.0, lng: -175.0 },\n  'Sea of Okhotsk': { lat: 55.0, lng: 150.0 },\n  'Barents Sea': { lat: 75.0, lng: 40.0 },\n  'Beaufort Sea': { lat: 73.0, lng: -140.0 },\n  \n  // CONTINENTAL REGIONS & SUB-REGIONS\n  \n  // North American Regions\n  'North America': { lat: 54.5260, lng: -105.2551 },\n  'Central America': { lat: 12.7690, lng: -85.6024 },\n  'Caribbean': { lat: 21.4691, lng: -78.6569 },\n  'West Coast USA': { lat: 40.0, lng: -120.0 },\n  'East Coast USA': { lat: 37.0, lng: -76.0 },\n  'Gulf Coast': { lat: 29.0, lng: -90.0 },\n  'Midwest USA': { lat: 41.0, lng: -93.0 },\n  'Great Plains': { lat: 41.0, lng: -100.0 },\n  'Rocky Mountains': { lat: 43.0, lng: -110.0 },\n  'Appalachian Mountains': { lat: 38.0, lng: -81.0 },\n  'Pacific Northwest': { lat: 47.0, lng: -122.0 },\n  'Southwest USA': { lat: 34.0, lng: -111.0 },\n  'Southeast USA': { lat: 33.0, lng: -83.0 },\n  'Northeast USA': { lat: 43.0, lng: -75.0 },\n  'New England': { lat: 44.0, lng: -71.0 },\n  \n  // South American Regions\n  'South America': { lat: -8.7832, lng: -55.4915 },\n  'Andes Mountains': { lat: -20.0, lng: -68.0 },\n  'Amazon Basin': { lat: -3.0, lng: -60.0 },\n  'Patagonia': { lat: -43.0, lng: -68.0 },\n  'Tierra del Fuego': { lat: -54.0, lng: -69.0 },\n  'Pampas': { lat: -35.0, lng: -63.0 },\n  \n  // European Regions\n  'Europe': { lat: 54.5260, lng: 15.2551 },\n  'Western Europe': { lat: 49.0, lng: 5.0 },\n  'Eastern Europe': { lat: 52.0, lng: 30.0 },\n  'Southern Europe': { lat: 41.0, lng: 15.0 },\n  'Northern Europe': { lat: 62.0, lng: 15.0 },\n  'Central Europe': { lat: 50.0, lng: 14.0 },\n  'Scandinavia': { lat: 63.0, lng: 15.0 },\n  'Balkans': { lat: 42.0, lng: 21.0 },\n  'Iberian Peninsula': { lat: 40.0, lng: -4.0 },\n  'British Isles': { lat: 54.0, lng: -4.0 },\n  'Alps': { lat: 46.5, lng: 9.5 },\n  'Pyrenees': { lat: 42.7, lng: 0.5 },\n  'Carpathian Mountains': { lat: 47.0, lng: 25.0 },\n  \n  // African Regions\n  'Africa': { lat: -8.7832, lng: 34.5085 },\n  'North Africa': { lat: 28.0, lng: 15.0 },\n  'Sub-Saharan Africa': { lat: -5.0, lng: 25.0 },\n  'East Africa': { lat: 0.0, lng: 38.0 },\n  'West Africa': { lat: 10.0, lng: -5.0 },\n  'Central Africa': { lat: 0.0, lng: 22.0 },\n  'Southern Africa': { lat: -25.0, lng: 25.0 },\n  'Sahara Desert': { lat: 23.0, lng: 10.0 },\n  'Sahel': { lat: 15.0, lng: 0.0 },\n  'Horn of Africa': { lat: 8.0, lng: 48.0 },\n  'Great Rift Valley': { lat: 0.0, lng: 36.0 },\n  'Congo Basin': { lat: 0.0, lng: 22.0 },\n  'Kalahari Desert': { lat: -24.0, lng: 22.0 },\n  \n  // Asian Regions\n  'Asia': { lat: 34.0479, lng: 100.6197 },\n  'East Asia': { lat: 35.0, lng: 115.0 },\n  'Southeast Asia': { lat: 10.0, lng: 105.0 },\n  'South Asia': { lat: 22.0, lng: 79.0 },\n  'Central Asia': { lat: 45.0, lng: 65.0 },\n  'Western Asia': { lat: 32.0, lng: 45.0 },\n  'Middle East': { lat: 29.0, lng: 41.0 },\n  'Siberia': { lat: 60.0, lng: 105.0 },\n  'Far East': { lat: 45.0, lng: 135.0 },\n  'Himalayas': { lat: 28.0, lng: 84.0 },\n  'Tibetan Plateau': { lat: 33.0, lng: 88.0 },\n  'Arabian Peninsula': { lat: 23.0, lng: 45.0 },\n  'Indochina': { lat: 16.0, lng: 105.0 },\n  'Malay Archipelago': { lat: 0.0, lng: 115.0 },\n  'Korean Peninsula': { lat: 38.0, lng: 127.5 },\n  \n  // Oceania Regions\n  'Oceania': { lat: -22.7359, lng: 140.0188 },\n  'Melanesia': { lat: -7.0, lng: 155.0 },\n  'Micronesia': { lat: 7.0, lng: 150.0 },\n  'Polynesia': { lat: -15.0, lng: -150.0 },\n  'Australasia': { lat: -27.0, lng: 145.0 },\n  \n  // TECTONIC PLATES (approximate centers)\n  'Pacific Plate': { lat: 0.0, lng: -160.0 },\n  'North American Plate': { lat: 45.0, lng: -100.0 },\n  'Eurasian Plate': { lat: 55.0, lng: 90.0 },\n  'African Plate': { lat: 0.0, lng: 20.0 },\n  'Antarctic Plate': { lat: -80.0, lng: 0.0 },\n  'Indo-Australian Plate': { lat: -25.0, lng: 120.0 },\n  'South American Plate': { lat: -15.0, lng: -60.0 },\n  'Nazca Plate': { lat: -20.0, lng: -95.0 },\n  'Cocos Plate': { lat: 8.0, lng: -95.0 },\n  'Caribbean Plate': { lat: 15.0, lng: -75.0 },\n  'Philippine Plate': { lat: 15.0, lng: 126.0 },\n  'Arabian Plate': { lat: 20.0, lng: 50.0 },\n  'Scotia Plate': { lat: -57.0, lng: -40.0 },\n  'Juan de Fuca Plate': { lat: 47.0, lng: -128.0 },\n  \n  // Fallback\n  'Unknown': { lat: 0, lng: 0 }\n};\n\nconst results = [];\nlet cacheHits = 0;\nlet needsApi = 0;\n\nfor (const item of $input.all()) {\n  const json = item.json;\n  const location = json.llm_location || 'Unknown';\n  let coords = null;\n  let method = 'none';\n  \n  console.log(`Geocoding: \"${location}\"`);\n  \n  // 1. Check exact cache match\n  if (locationCache[location]) {\n    coords = locationCache[location];\n    method = 'cache-exact';\n    cacheHits++;\n    console.log(`  ✓ Cache hit: [${coords.lat}, ${coords.lng}]`);\n  }\n  // 2. Try partial match\n  else {\n    for (const [country, countryCoords] of Object.entries(locationCache)) {\n      if (country !== 'Unknown' && location.toLowerCase().includes(country.toLowerCase())) {\n        coords = countryCoords;\n        method = 'cache-partial';\n        cacheHits++;\n        console.log(`  ✓ Cache partial (${country}): [${coords.lat}, ${coords.lng}]`);\n        break;\n      }\n    }\n  }\n  \n  // 3. Mark for API call if needed\n  if (!coords && location !== 'Unknown') {\n    needsApi++;\n    method = 'needs-api';\n    coords = { lat: 0, lng: 0 }; // Temporary\n    console.log(`  → Needs API call`);\n  } else if (!coords) {\n    coords = { lat: 0, lng: 0 };\n    method = 'fallback';\n  }\n  \n  results.push({\n    json: {\n      ...json,\n      lat: coords.lat,\n      lng: coords.lng,\n      geocode_method: method\n    }\n  });\n}\n\nconsole.log(`Cache hits: ${cacheHits}, Need API: ${needsApi}, Total: ${results.length}`);\nreturn results;"
       },
       "id": "cd7b756c-dc1f-4ec4-9e4a-08efdfcfbd17",
       "name": "Geocode Location2",
@@ -316,7 +324,8 @@
     },
     {
       "parameters": {
-        "amount": 30
+        "amount": 2,
+        "unit": "minutes"
       },
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
@@ -326,11 +335,12 @@
       ],
       "id": "7f415631-339c-4812-a6b7-64409a743966",
       "name": "Wait1",
-      "webhookId": "848cce1d-26de-47e7-b4ad-d225024bd209"
+      "webhookId": "848cce1d-26de-47e7-b4ad-d225024bd209",
+      "disabled": true
     },
     {
       "parameters": {
-        "amount": 30
+        "amount": 45
       },
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
@@ -340,7 +350,52 @@
       ],
       "id": "73b876d3-c935-4029-a4da-bdf7f6baa0b2",
       "name": "Wait2",
-      "webhookId": "848cce1d-26de-47e7-b4ad-d225024bd209"
+      "webhookId": "848cce1d-26de-47e7-b4ad-d225024bd209",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "url": "https://www.crisisgroup.org/rss",
+        "options": {}
+      },
+      "id": "7e198f4c-921e-4e8e-b6a8-f5f0bc07836d",
+      "name": "Crisis Group",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        5184,
+        18656
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "url": "https://floodlist.com/feed",
+        "options": {}
+      },
+      "id": "2daf4acd-d6e2-45df-83a6-33ab7781ef28",
+      "name": "floodlist",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        5184,
+        17888
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://www.reddit.com/r/worldnews/.rss",
+        "options": {}
+      },
+      "id": "7fba4a0b-8413-4e32-b3d5-d3bb452629b1",
+      "name": "Crisis Group1",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        5184,
+        17744
+      ],
+      "disabled": true
     }
   ],
   "connections": {
@@ -400,6 +455,21 @@
           },
           {
             "node": "Google News Crisis2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Crisis Group",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "floodlist",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Crisis Group1",
             "type": "main",
             "index": 0
           }
@@ -625,6 +695,39 @@
         [
           {
             "node": "Filter & Categorize2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crisis Group": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "floodlist": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crisis Group1": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
             "type": "main",
             "index": 0
           }
