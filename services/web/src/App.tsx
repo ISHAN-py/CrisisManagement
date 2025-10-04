@@ -25,6 +25,15 @@ function FitBounds({ points }: { points: Crisis[] }) {
   const lastPointsRef = useRef<Crisis[]>([]);
   
   useEffect(() => {
+    // Set initial view constraints
+    map.setMinZoom(2);
+    map.setMaxBounds([[-90, -180], [90, 180]]);
+
+    // Calculate and set the minimum zoom level that shows the whole world
+    const worldBounds = [[-60, -180], [85, 180]];
+    const minZoom = map.getBoundsZoom(worldBounds as any);
+    map.setMinZoom(Math.max(2, minZoom));
+
     if (!points.length) return;
     if (JSON.stringify(points.map(p => p._id).sort()) === JSON.stringify(lastPointsRef.current.map(p => p._id).sort())) {
       return;
@@ -37,9 +46,41 @@ function FitBounds({ points }: { points: Crisis[] }) {
     try {
       const bounds = (window as any).L.latLngBounds(coords);
       const paddedBounds = bounds.pad(0.1);
-      map.fitBounds(paddedBounds, { padding: [50, 50], maxZoom: 8, animate: true, duration: 1.5 });
+      
+      // Ensure bounds don't exceed the world view
+      const adjustedBounds = (window as any).L.latLngBounds([
+        [Math.max(-60, paddedBounds.getSouth()), paddedBounds.getWest()],
+        [Math.min(85, paddedBounds.getNorth()), paddedBounds.getEast()]
+      ]);
+      
+      map.fitBounds(adjustedBounds, {
+        padding: [50, 50],
+        maxZoom: 8,
+        animate: true,
+        duration: 1.5
+      });
     } catch (e) { console.warn('Error fitting bounds:', e); }
   }, [points, map]);
+
+  // Prevent map from showing areas beyond poles
+  useEffect(() => {
+    const handleZoomEnd = () => {
+      const center = map.getCenter();
+      const adjustedLat = Math.min(Math.max(center.lat, -60), 85);
+      if (center.lat !== adjustedLat) {
+        map.setView([adjustedLat, center.lng], map.getZoom(), { animate: false });
+      }
+    };
+
+    map.on('zoomend', handleZoomEnd);
+    map.on('dragend', handleZoomEnd);
+
+    return () => {
+      map.off('zoomend', handleZoomEnd);
+      map.off('dragend', handleZoomEnd);
+    };
+  }, [map]);
+
   return null;
 }
 
@@ -302,8 +343,20 @@ export default function App() {
       </div>
 
       <div className={'map-card'} style={mapCardStyle}>
-        <MapContainer center={[20, 0]} zoom={2} style={{ height: '100%', width: '100%' }}>
-          <TileLayer attribution="&copy; OpenStreetMap" url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png" />
+        <MapContainer 
+          center={[20, 0]} 
+          zoom={2} 
+          style={{ height: '100%', width: '100%' }}
+          minZoom={2}
+          maxBounds={[[-90, -180], [90, 180]]}
+          maxBoundsViscosity={1.0}
+          worldCopyJump={false}
+        >
+          <TileLayer 
+            attribution="&copy; OpenStreetMap" 
+            url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+            noWrap={true}
+          />
           <FitBounds points={points} />
           {points.map((p) => {
             const isFocused = focusedCrisis === p._id;
@@ -353,30 +406,19 @@ export default function App() {
                   )}
                 </div>
               </Tooltip>
-              <Popup>
-                <div style={{ maxWidth: 320 }}>
-                  <div style={{ fontWeight: 700, marginBottom: 4 }}>
-                    {isGrouped && `📍 `}{p.title}
-                  </div>
-                  <div style={{ opacity: 0.8, marginBottom: 6 }}>{p.source} • {new Date(p.pubDate).toLocaleString()}</div>
-                  {p.country && <div style={{ marginTop: 2, marginBottom: 6 }}>Country: {p.country}</div>}
-                  {isGrouped && (
-                    <div style={{ marginBottom: 8, padding: '8px', background: 'rgba(59,130,246,0.1)', borderRadius: '6px', border: '1px solid rgba(59,130,246,0.3)' }}>
-                      <div style={{ fontWeight: 600, marginBottom: 4, color: '#93c5fd' }}>
-                        📍 This location groups {(p as any).groupedCount} crises
-                      </div>
-                      <div style={{ fontSize: 12, opacity: 0.9 }}>
-                        Showing highest priority: <strong>{p.severity}</strong> severity
-                      </div>
-                      {(p as any).hiddenCrises && (p as any).hiddenCrises.length > 0 && (
-                        <div style={{ marginTop: 4, fontSize: 11, opacity: 0.8 }}>
-                          Other crises: {(p as any).hiddenCrises.map((crisis: Crisis) => crisis.severity).join(', ')}
-                        </div>
-                      )}
-                    </div>
-                  )}
-                  <div style={{ marginBottom: 8, opacity: 0.9 }}>{p.description}</div>
-                  <a href={p.link} target="_blank" rel="noreferrer" style={{ color: '#93c5fd', textDecoration: 'underline' }}>Open article</a>
+              <Popup className="crisis-popup">
+                <div className="crisis-popup-content">
+                  <h3 className="crisis-popup-title">
+                    {isGrouped && `📍 Groups ${(p as any).groupedCount} crises - `}{p.title}
+                  </h3>
+                  <a href={p.link} target="_blank" rel="noreferrer" className="crisis-popup-link">
+                    <span>Open Article</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                      <polyline points="15 3 21 3 21 9"></polyline>
+                      <line x1="10" y1="14" x2="21" y2="3"></line>
+                    </svg>
+                  </a>
                 </div>
               </Popup>
             </CircleMarker>
@@ -420,10 +462,6 @@ export default function App() {
                   </div>
                   <div className="list-meta">
                     <span className={`sev sev-${(it.severity||'Low').toLowerCase()}`}>{it.severity || 'Low'}</span>
-                    <span>•</span>
-                    <span>{it.source || 'Unknown'}</span>
-                    <span>•</span>
-                    <span>{new Date(it.pubDate).toLocaleString()}</span>
                   </div>
                   <a 
                     className="list-link" 
@@ -432,7 +470,7 @@ export default function App() {
                     rel="noreferrer" 
                     onClick={(e) => e.stopPropagation()}
                   >
-                    Open
+                    Open Article
                   </a>
                 </li>
               );

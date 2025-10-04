@@ -2,6 +2,18 @@ import { Marker, Popup, Tooltip } from 'react-leaflet';
 import L from 'leaflet';
 import { useMemo } from 'react';
 
+// Helper function to sanitize HTML content
+function sanitizeText(text: string): string {
+  return text
+    .replace(/<[^>]*>/g, '') // Remove HTML tags
+    .replace(/&nbsp;/g, ' ') // Replace &nbsp; with space
+    .replace(/&amp;/g, '&') // Replace &amp; with &
+    .replace(/&lt;/g, '<') // Replace &lt; with <
+    .replace(/&gt;/g, '>') // Replace &gt; with >
+    .replace(/&quot;/g, '"') // Replace &quot; with "
+    .replace(/&#39;/g, "'"); // Replace &#39; with '
+}
+
 type Props = {
   position: [number, number];
   severity: 'Critical' | 'High' | 'Medium' | 'Low';
@@ -60,13 +72,17 @@ export default function RippleMarker(props: Props) {
           <div style={{ opacity: 0.8, fontSize: 12 }}>{source} • {new Date(pubDate).toLocaleString()}</div>
         </div>
       </Tooltip>
-      <Popup>
-        <div style={{ maxWidth: 300 }}>
-          <div style={{ fontWeight: 700, marginBottom: 4 }}>{title}</div>
-          <div style={{ opacity: 0.8, marginBottom: 6 }}>{source} • {new Date(pubDate).toLocaleString()}</div>
-          {country && <div style={{ marginTop: 2, marginBottom: 6 }}>Country: {country}</div>}
-          <div style={{ marginBottom: 8, opacity: 0.9 }}>{description}</div>
-          <a href={link} target="_blank" rel="noreferrer" style={{ color: '#93c5fd', textDecoration: 'underline' }}>Open article</a>
+      <Popup className="crisis-popup">
+        <div className="crisis-popup-content">
+          <h3 className="crisis-popup-title">{sanitizeText(title)}</h3>
+          <a href={link} target="_blank" rel="noreferrer" className="crisis-popup-link">
+            <span>Open Article</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+              <polyline points="15 3 21 3 21 9"></polyline>
+              <line x1="10" y1="14" x2="21" y2="3"></line>
+            </svg>
+          </a>
         </div>
       </Popup>
     </Marker>
