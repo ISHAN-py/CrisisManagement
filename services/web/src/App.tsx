@@ -255,7 +255,23 @@ export default function App() {
     return validPoints;
   }, [filtered, focusedCrisis]);
 
-  const sortedList = useMemo(() => [...filtered].sort((a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime()).slice(0, 50), [filtered]);
+  const sortedList = useMemo(() => {
+    const severityOrder = {
+      'Critical': 4,
+      'High': 3,
+      'Medium': 2,
+      'Low': 1
+    };
+
+    return [...filtered].sort((a, b) => {
+      // First sort by severity
+      const severityDiff = (severityOrder[b.severity || 'Low'] || 1) - (severityOrder[a.severity || 'Low'] || 1);
+      if (severityDiff !== 0) return severityDiff;
+      
+      // If severity is the same, sort by date
+      return new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime();
+    }).slice(0, 50);
+  }, [filtered]);
   const counts = useMemo(() => { const c = { Critical: 0, High: 0, Medium: 0, Low: 0 } as Record<Severity, number>; for (const it of displayItems) if (it.severity) c[it.severity]++; return c; }, [displayItems]);
 
   const mapCardStyle: React.CSSProperties = { position: 'absolute', left: 16, top: 180, bottom: 16, right: 412, borderRadius: 16, overflow: 'visible', boxShadow: '0 10px 30px rgba(0,0,0,0.35)', zIndex: 900 };
