@@ -1,0 +1,40 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "services/api/src/index.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "services/web/package.json",
+      "use": "@vercel/static-build",
+      "config": { "distDir": "dist" }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/events",
+      "dest": "services/api/src/index.js"
+    },
+    {
+      "src": "/crises",
+      "dest": "services/api/src/index.js"
+    },
+    {
+      "src": "/stats",
+      "dest": "services/api/src/index.js"
+    },
+    {
+      "src": "/cleanup",
+      "dest": "services/api/src/index.js"
+    },
+    {
+      "src": "/cleanup/stats",
+      "dest": "services/api/src/index.js"
+    },
+    {
+      "src": "/((?!api/.*).*)",
+      "dest": "services/web/$1"
+    }
+  ]
+}

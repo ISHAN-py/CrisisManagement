@@ -2,7 +2,7 @@ import { MapContainer, TileLayer, CircleMarker, Popup, Tooltip, useMap } from 'r
 import 'leaflet/dist/leaflet.css';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:3000';
+const API_BASE = import.meta.env.VITE_API_BASE || window.location.origin;
 
 type Severity = 'Critical' | 'High' | 'Medium' | 'Low';
 

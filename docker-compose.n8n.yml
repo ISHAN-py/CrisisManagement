@@ -1,0 +1,24 @@
+version: "3.9"
+
+services:
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: crisis_n8n
+    restart: always
+    environment:
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=admin
+      - N8N_BASIC_AUTH_PASSWORD=hackathon2025
+      - N8N_HOST=n8n
+      - N8N_PROTOCOL=http
+      - GENERIC_TIMEZONE=UTC
+      - N8N_EDITOR_BASE_URL=http://localhost:5680
+      - WEBHOOK_URL=http://localhost:5680
+    ports:
+      - "5680:5678"
+    volumes:
+      - n8n_data:/home/node/.n8n
+
+volumes:
+  n8n_data:
