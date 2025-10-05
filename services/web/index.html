@@ -665,18 +665,35 @@
       }
 
       .about-button {
-        background: none;
-        border: none;
-        color: #e2e8f0;
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(59, 130, 246, 0.1) 100%);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        color: #93c5fd;
         font-size: 14px;
+        font-weight: 600;
         cursor: pointer;
-        padding: 8px 16px;
+        padding: 10px 20px;
         border-radius: 12px;
         transition: var(--transition-smooth);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+      }
+
+      .about-button::before {
+        content: "ℹ️";
+        font-size: 16px;
       }
 
       .about-button:hover {
-        background: rgba(255,255,255,0.1);
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.3) 0%, rgba(59, 130, 246, 0.15) 100%);
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(59, 130, 246, 0.2);
+      }
+
+      .about-button:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);
       }
 
 

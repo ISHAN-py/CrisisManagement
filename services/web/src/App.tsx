@@ -295,8 +295,12 @@ export default function App() {
           <div className="sub">Real-time monitoring of global incidents and emergencies</div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-          <button className="about-button" onClick={() => setShowAbout(true)}>
-            About
+          <button 
+            className="about-button" 
+            onClick={() => setShowAbout(true)}
+            title="Learn about this project"
+          >
+            Project Info
           </button>
           <div className="active">{stats?.total ?? displayItems.length}<span> Active Crises</span></div>
         </div>

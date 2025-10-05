@@ -44,6 +44,20 @@ const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
         </section>
 
         <section className="modal-section">
+          <h3>Technical Architecture</h3>
+          <p>
+            The system leverages multiple N8N automation workflows running in the backend to provide real-time crisis monitoring:
+          </p>
+          <ul>
+            <li>Data Collection: Automated gathering from multiple news sources and crisis feeds</li>
+            <li>Content Processing: Natural language processing for crisis severity assessment</li>
+            <li>Geocoding Engine: Automated location extraction and coordinate mapping</li>
+            <li>Deduplication System: Intelligent clustering of related crisis events</li>
+            <li>Data Cleanup: Automated maintenance and archival of historical data</li>
+          </ul>
+        </section>
+
+        <section className="modal-section">
           <h3>Key Features</h3>
           <ul>
             <li>Real-time Crisis Monitoring with Severity Classification</li>
@@ -52,6 +66,7 @@ const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
             <li>Priority-based Information Display</li>
             <li>Responsive Design with Modern UI/UX</li>
             <li>Intelligent Crisis Clustering and Deduplication</li>
+            <li>Multi-stage N8N Automation Pipeline</li>
           </ul>
         </section>
 
