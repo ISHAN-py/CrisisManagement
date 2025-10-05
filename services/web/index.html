@@ -551,6 +551,134 @@
         box-shadow: var(--glow-low);
       }
 
+      /* About Modal Styles */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(8px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        padding: 20px;
+      }
+
+      .modal-content {
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: 24px;
+        padding: 32px;
+        max-width: 800px;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.05);
+        color: #e2e8f0;
+        position: relative;
+      }
+
+      .modal-close {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: none;
+        border: none;
+        color: #e2e8f0;
+        font-size: 24px;
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: var(--transition-smooth);
+      }
+
+      .modal-close:hover {
+        background: rgba(255,255,255,0.1);
+      }
+
+      .modal-title {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 24px;
+        background: linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .modal-section {
+        margin-bottom: 24px;
+      }
+
+      .modal-section h3 {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 12px;
+        color: #93c5fd;
+      }
+
+      .modal-section p {
+        line-height: 1.6;
+        margin-bottom: 16px;
+      }
+
+      .modal-section ul {
+        list-style-type: none;
+        padding: 0;
+      }
+
+      .modal-section li {
+        margin-bottom: 8px;
+        padding-left: 24px;
+        position: relative;
+      }
+
+      .modal-section li::before {
+        content: "•";
+        position: absolute;
+        left: 8px;
+        color: #93c5fd;
+      }
+
+      .github-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #93c5fd;
+        text-decoration: none;
+        padding: 8px 16px;
+        background: rgba(59, 130, 246, 0.1);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        border-radius: 12px;
+        transition: var(--transition-smooth);
+      }
+
+      .github-link:hover {
+        background: rgba(59, 130, 246, 0.2);
+        transform: translateY(-1px);
+      }
+
+      .about-button {
+        background: none;
+        border: none;
+        color: #e2e8f0;
+        font-size: 14px;
+        cursor: pointer;
+        padding: 8px 16px;
+        border-radius: 12px;
+        transition: var(--transition-smooth);
+      }
+
+      .about-button:hover {
+        background: rgba(255,255,255,0.1);
+      }
+
 
       /* Glassmorphic Map Card */
       /* Map Card */

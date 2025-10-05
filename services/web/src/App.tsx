@@ -1,6 +1,7 @@
 import { MapContainer, TileLayer, CircleMarker, Popup, Tooltip, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import AboutModal from './components/AboutModal';
 
 const API_BASE = import.meta.env.VITE_API_BASE || window.location.origin;
 
@@ -102,6 +103,7 @@ export default function App() {
   const [query, setQuery] = useState('');
   const [severity, setSeverity] = useState<'All' | Severity>('All');
   const [focusedCrisis, setFocusedCrisis] = useState<string | null>(null);
+  const [showAbout, setShowAbout] = useState(false);
   const eventRef = useRef<EventSource | null>(null);
   const retryRef = useRef(0);
 
@@ -292,8 +294,14 @@ export default function App() {
           <div className="title-xl">Global Crisis Monitor</div>
           <div className="sub">Real-time monitoring of global incidents and emergencies</div>
         </div>
-        <div className="active">{stats?.total ?? displayItems.length}<span> Active Crises</span></div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+          <button className="about-button" onClick={() => setShowAbout(true)}>
+            About
+          </button>
+          <div className="active">{stats?.total ?? displayItems.length}<span> Active Crises</span></div>
+        </div>
       </header>
+      <AboutModal isOpen={showAbout} onClose={() => setShowAbout(false)} />
 
       {/* Crisis Category Banner */}
       <div className="crisis-banner" style={{ 
